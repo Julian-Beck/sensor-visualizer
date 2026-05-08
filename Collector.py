@@ -2,17 +2,6 @@ import socket
 import json
 from datetime import datetime
 
-class Data:
-    def __init__(self, time, temp, humidity, pressure):
-        self.time = time
-        self.temp = temp
-        self.humidity = humidity
-        self.pressure = pressure
-
-    def __str__(self):
-        return "{" + f"\"time\": {self.time}, \"temp\":{self.temp}, \"humidity\": {self.humidity}, \"pressure\": {self.pressure}" + "}"
-
-
 class Collector:
     def __init__(self, host="localhost", port=5005):
         self.host = host
@@ -30,12 +19,12 @@ class Collector:
 
             time = datetime.strptime(json_data["timestamp"], "%Y-%m-%dT%H:%M:%S.%f")
             
-            queue_out.put(
-                Data(
-                    time,
-                    json_data["temperatur_C"], 
-                    json_data["luftfeuchte_pct"], 
-                    json_data["druck_hPa"]
-                )
-            )
+            data = {
+                "time": time,
+                "temp": json_data["temperatur_C"], 
+                "humidity": json_data["luftfeuchte_pct"], 
+                "pressure": json_data["druck_hPa"]
+                }
+            
+            queue_out.put(data)
         
