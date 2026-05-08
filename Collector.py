@@ -22,16 +22,20 @@ class Collector:
     def connect(self):
         self.client.connect((self.host, self.port))
 
-    def read(self):
-        recv_data = self.client.recv(1024).decode('utf-8')
+    def read_loop(self, queue_out):
+        while True:
+            recv_data = self.client.recv(1024).decode('utf-8')
 
-        json_data = json.loads(recv_data)
+            json_data = json.loads(recv_data)
 
-        time = datetime.strptime(json_data["timestamp"], "%Y-%m-%dT%H:%M:%S.%f")
-        return Data(
-            time,
-            json_data["temperatur_C"], 
-            json_data["luftfeuchte_pct"], 
-            json_data["druck_hPa"]
+            time = datetime.strptime(json_data["timestamp"], "%Y-%m-%dT%H:%M:%S.%f")
+            
+            queue_out.put(
+                Data(
+                    time,
+                    json_data["temperatur_C"], 
+                    json_data["luftfeuchte_pct"], 
+                    json_data["druck_hPa"]
+                )
             )
         
