@@ -1,5 +1,6 @@
 import socket
 import json
+from datetime import datetime
 
 class Data:
     def __init__(self, time, temp, humidity, pressure):
@@ -26,8 +27,9 @@ class Collector:
 
         json_data = json.loads(recv_data)
 
+        time = datetime.strptime(json_data["timestamp"], "%Y-%m-%dT%H:%M:%S.%f")
         return Data(
-            json_data["timestamp"],
+            time,
             json_data["temperatur_C"], 
             json_data["luftfeuchte_pct"], 
             json_data["druck_hPa"]
