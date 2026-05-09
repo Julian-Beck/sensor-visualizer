@@ -6,6 +6,7 @@ import threading
 import queue
 
 
+
 def main():
 
     root = Tk()
@@ -28,18 +29,17 @@ def main():
     temp_frame.grid_propagate(False)
 
 
-    data_queue = queue.Queue()
-    temp_visual = Visualizer(data_queue, temp_frame, "temp", 15, 35)
-    humidity_visual = Visualizer(data_queue, humidity_frame, "humidity", 25, 80)
-    pressure_visual = Visualizer(data_queue, pressure_frame, "pressure", 1000, 1025)
+    Visualizer(temp_frame, "temp", 15, 35)
+    Visualizer(humidity_frame, "humidity", 25, 80)
+    Visualizer(pressure_frame, "pressure", 1000, 1025)
 
     sensor = Collector("localhost", 5005)
-    sensor.connect()
     
+    data_queue = queue.Queue()
+    #sensor.connect()
     threading.Thread(target=sensor.read_loop, args=(data_queue,), daemon=True).start()
-    threading.Thread(target=temp_visual.update_loop, daemon=True).start()
-    threading.Thread(target=humidity_visual.update_loop, daemon=True).start()
-    threading.Thread(target=pressure_visual.update_loop, daemon=True).start()
+    threading.Thread(target=Visualizer.update_loop, args=(data_queue,), daemon=True).start()
+    
     window.mainloop()
 
 if __name__ == "__main__":

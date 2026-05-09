@@ -4,13 +4,25 @@ from tkinter import Tk
 import queue
 
 class Visualizer:
-    def __init__(self, queue_in: queue.Queue, window, data_key, val_min, val_max):
+    visuals = []
+
+    @staticmethod
+    def update_loop(queue_in: queue.Queue):
+        while True:
+            try:
+                next_data: dict = queue_in.get(timeout=1)
+                for visual in Visualizer.visuals:
+                    visual.update(next_data["time"], next_data[visual.data_key])
+            except queue.Empty:
+                pass
+
+    def __init__(self, window, data_key, val_min, val_max):
         self.window = window
-        self.canvas = None
         self.fig = plt.figure(figsize=(16, 4), dpi=50)
         self.ax = plt.axes()
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.window)
+        self.canvas.get_tk_widget().pack(fill="both", expand=True)
 
-        self.queue_in = queue_in
         self.data_key = data_key
         self.val_min = val_min
         self.val_max = val_max
@@ -21,31 +33,24 @@ class Visualizer:
         self.time = []
         self.data = []
 
+        Visualizer.visuals.append(self)
+
     def validate(self, to_check):
         return to_check > self.val_min and to_check < self.val_max 
 
-    def update_loop(self):
-        if self.canvas is None:
-            self.canvas = FigureCanvasTkAgg(self.fig, master=self.window)
-            self.canvas.get_tk_widget().pack(fill="both", expand=True)
-        while True:
-            try:
-                next_data: dict = self.queue_in.get(timeout=1)
+    def update(self, next_time, next_data):
+        if not self.validate(next_data):
+            print(f"{self.data_key} -> {next_data}")
+            return  
 
-                if not self.validate(next_data[self.data_key]):
-                    print(f"{self.data_key} -> {next_data[self.data_key]}")
-                    continue
+        self.time.append(next_time)
+        self.data.append(next_data)
 
-                self.time.append(next_data["time"])
-                self.data.append(next_data[self.data_key])
-
-                if len(self.data) > 300:
-                    self.data.pop(0)
-                    self.time.pop(0)
-                
-                self.ax.clear()
-                self.ax.plot(self.time, self.data)
-                
-                self.canvas.draw_idle()
-            except queue.Empty:
-                pass
+        if len(self.data) > 300:
+            self.data.pop(0)
+            self.time.pop(0)
+        
+        self.ax.clear()
+        self.ax.plot(self.time, self.data)
+        
+        self.canvas.draw_idle()
