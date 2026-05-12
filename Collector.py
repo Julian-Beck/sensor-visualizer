@@ -15,7 +15,6 @@ class Collector:
         self.client.close()
 
     def read_loop(self, queue_out):
-        self.connect()
         while True:
             recv_data = self.client.recv(1024).decode('utf-8')
 

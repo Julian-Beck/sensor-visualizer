@@ -1,6 +1,7 @@
 from Collector import Collector
 from Visualizer import Visualizer
-from tkinter import Tk, Frame, Label
+from tkinter import Tk, Frame
+import tkinter as tk
 import threading
 import queue
 from dataclasses import dataclass
@@ -13,7 +14,7 @@ class dataType:
     max: int
 
 def main():
-    data = [
+    sensor_datatypes = [
         dataType(
             "temp",
             "Temprature in °C",
@@ -36,20 +37,25 @@ def main():
 
     root = Tk()
     root.title('Sensor Data Visualizer')
-    window = Frame(root, background="white")
-    window.pack(fill="both", expand=True)
 
-    for i, d in enumerate(data):
+    width= root.winfo_screenwidth() 
+    height= root.winfo_screenheight()
+    root.geometry("%dx%d" % (width, height))
+    print(f"{width}, {height}")
+    window = Frame(root, background="white")
+    window.pack(fill=tk.BOTH, expand=True)
+
+    for i, datatype in enumerate(sensor_datatypes):
         #Label(window, text=d.label, background="white").grid(column=0, row=i)
         frame = Frame(window)
         frame.grid(column=1, row=i)
         frame.grid_propagate(False)
-        Visualizer(frame, d.key, d.min, d.max, d.label)
+        Visualizer(frame, datatype.key, datatype.min, datatype.max, datatype.label)
 
     sensor = Collector("localhost", 5005)
-    
+    sensor.connect()
+
     data_queue = queue.Queue()
-    #sensor.connect()
     threading.Thread(target=sensor.read_loop, args=(data_queue,), daemon=True).start()
     threading.Thread(target=Visualizer.update_loop, args=(data_queue,), daemon=True).start()
 

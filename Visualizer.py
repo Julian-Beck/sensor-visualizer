@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
+import tkinter as tk
 import queue
 import datetime
 
@@ -18,10 +19,10 @@ class Visualizer:
 
     def __init__(self, window, data_key, val_min, val_max, label):
         self.window = window
-        self.fig = plt.figure(figsize=(24, 6), dpi=50)
+        self.fig = plt.figure(figsize=(48, 8), dpi=50)
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.window)
-        self.canvas.get_tk_widget().pack(fill="both", expand=True)
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
 
         self.label = label
         self.data_key = data_key
@@ -40,12 +41,13 @@ class Visualizer:
         return to_check > self.val_min and to_check < self.val_max 
 
     def update(self, next_time, next_data):
+        self.time.append(next_time)
+        
         if not self.validate(next_data):
             print(f"Invalid reading: {self.data_key} -> {next_data}")
-            return  
-
-        self.time.append(next_time)
-        self.data.append(next_data)
+            self.data.append(self.data[-1])
+        else:
+            self.data.append(next_data)
 
         if len(self.data) > 150:
             self.data.pop(0)
@@ -53,9 +55,8 @@ class Visualizer:
 
         self.ax.clear()
         self.ax.plot(list(self.time), list(self.data))
-        self.ax.set_xlabel('Time', fontsize=18)
-        self.ax.set_ylabel(self.label, fontsize=18)
-        self.ax.tick_params(axis='both', which='major', labelsize=18)
+        self.ax.set_ylabel(self.label, fontsize=32)
+        self.ax.tick_params(axis='both', which='major', labelsize=24)
         self.ax.set_ylim(self.val_min, self.val_max) 
         self.ax.set_xlim(min(self.time) if self.time else 0, 
             min(self.time) + datetime.timedelta(seconds=30) if self.time else 1)
