@@ -10,6 +10,9 @@ class Collector:
 
     def connect(self):
         self.client.connect((self.host, self.port))
+    
+    def disconnect(self):
+        self.client.close()
 
     def read_loop(self, queue_out):
         self.connect()
@@ -23,9 +26,8 @@ class Collector:
             data = {
                 "time": time,
                 "temp": json_data["temperatur_C"], 
-                "humidity": json_data["luftfeuchte_pct"], 
-                "pressure": json_data["druck_hPa"]
+                "humid": json_data["luftfeuchte_pct"], 
+                "pres": json_data["druck_hPa"]
                 }
             
             queue_out.put(data)
-        
