@@ -1,6 +1,7 @@
 import socket
 import json
 from datetime import datetime
+import time
 
 class Collector:
     def __init__(self, host="localhost", port=5005):
@@ -9,7 +10,13 @@ class Collector:
         self.client = socket.socket()
 
     def connect(self):
-        self.client.connect((self.host, self.port))
+        while True:
+            try:
+                self.client.connect((self.host, self.port))
+            except:
+                print(f"Connection to {self.host}:{self.port} failed! Next try in 5s")
+                time.sleep(5)
+
     
     def disconnect(self):
         self.client.close()

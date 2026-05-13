@@ -18,10 +18,10 @@ class SensorPlot:
             except queue.Empty:
                 pass
 
-    def __init__(self, window, data_type):
+    def __init__(self, window, data_type, scale_facor):
         self.window = window
         self.data_type = data_type
-        self.fig = plt.figure(figsize=(48, 8), dpi=50)
+        self.fig = plt.figure(figsize=(48*scale_facor, 8*scale_facor), dpi=50)
         self.ax = self.fig.add_subplot(111)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.window)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)

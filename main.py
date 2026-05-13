@@ -6,6 +6,8 @@ import threading
 import queue
 from dataclasses import dataclass
 
+SCALE_FACTOR = 1
+
 @dataclass
 class DataType:
     key: str
@@ -52,7 +54,7 @@ def main():
     for i, datatype in enumerate(sensor_datatypes):
         frame = Frame(window, background="white")
         frame.grid(column=1, row=i)
-        SensorPlot(frame, datatype)
+        SensorPlot(frame, datatype, SCALE_FACTOR)
 
     sensor = Collector("localhost", 5005)
     data_queue = queue.Queue()
