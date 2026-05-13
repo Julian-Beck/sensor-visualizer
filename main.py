@@ -1,5 +1,5 @@
 from Collector import Collector
-from Visualizer import Visualizer
+from SensorPlot import SensorPlot
 from tkinter import Tk, Frame
 import tkinter as tk
 import threading
@@ -7,29 +7,33 @@ import queue
 from dataclasses import dataclass
 
 @dataclass
-class dataType:
+class DataType:
     key: str
     label: str
+    unit: str
     min: int
     max: int
 
 def main():
     sensor_datatypes = [
-        dataType(
+        DataType(
             "temp",
-            "Temprature in °C",
+            "Temperature",
+            "°C",
             15,
             30    
         ),
-        dataType(
+        DataType(
             "humid",
-            "Humidity in %",
+            "Humidity",
+            "%",
             25,
             80    
         ),
-        dataType(
+        DataType(
             "pres",
-            "Pressure in hPa ",
+            "Pressure",
+            "hPa ",
             1000,
             1025   
         )
@@ -46,18 +50,15 @@ def main():
     window.pack(fill=tk.BOTH, expand=True)
 
     for i, datatype in enumerate(sensor_datatypes):
-        #Label(window, text=d.label, background="white").grid(column=0, row=i)
-        frame = Frame(window)
+        frame = Frame(window, background="white")
         frame.grid(column=1, row=i)
-        frame.grid_propagate(False)
-        Visualizer(frame, datatype.key, datatype.min, datatype.max, datatype.label)
+        SensorPlot(frame, datatype)
 
     sensor = Collector("localhost", 5005)
-    sensor.connect()
-
     data_queue = queue.Queue()
+
     threading.Thread(target=sensor.read_loop, args=(data_queue,), daemon=True).start()
-    threading.Thread(target=Visualizer.update_loop, args=(data_queue,), daemon=True).start()
+    threading.Thread(target=SensorPlot.update_loop, args=(data_queue,), daemon=True).start()
 
     window.mainloop()
 
