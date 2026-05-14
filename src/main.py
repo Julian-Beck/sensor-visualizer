@@ -58,7 +58,8 @@ def main():
 
     sensor = Collector("localhost", 5005)
     data_queue = queue.Queue()
-
+    
+    sensor.connect()
     threading.Thread(target=sensor.read_loop, args=(data_queue,), daemon=True).start()
     threading.Thread(target=SensorPlot.update_loop, args=(data_queue,), daemon=True).start()
 

@@ -13,6 +13,7 @@ class Collector:
         while True:
             try:
                 self.client.connect((self.host, self.port))
+                return
             except:
                 print(f"Connection to {self.host}:{self.port} failed! Next try in 5s")
                 time.sleep(5)
@@ -22,7 +23,6 @@ class Collector:
         self.client.close()
 
     def read_loop(self, queue_out):
-        self.connect()
         while True:
             recv_data = self.client.recv(1024).decode('utf-8')
 
