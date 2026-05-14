@@ -17,8 +17,8 @@ SCALE_FACTOR = 1.5 # wenn Graphen zu klein sind
 ## Installation und Ausführung
 Voraussetzungen zum Ausführen:
  - Python3 + pip
- - matplotlib (pip-Paket)
  - `data_streamer.exe`
+ - matplotlib (pip-Paket)
  - (git, falls man das Projekt von github clonen möchte)
 
 Folgende Schritte sind für das Ausführen notwendig:
@@ -43,12 +43,23 @@ Folgende Schritte sind für das Ausführen notwendig:
  2. In einem *separaten* Terminal Repository herunterladen und Projekt starten
 
     ```bash
+        # Repo herunterladen
         cd <beliebiges Verzeichnis>
         
         git clone git@github.com:Julian-Beck/sensor-visualizer.git
         
-        cd sensor-visualizer
         
+        # Python virtual evironment aufsetzen
+        cd sensor-visualizer/src
+        
+        python3 -m venv myenv
+        
+        myenv/bin/activate # Windows
+        source myenv/bin/activate #Linux
+
+        pip install -r requirements.txt
+
+        # Starten
         python3 main.py
     ```
 
