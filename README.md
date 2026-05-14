@@ -74,7 +74,7 @@ Es gibt drei wichtige Akteure:
  - Die `main()` Funktion, welche zwei separate Threads - für den `Collector` und die statische Methode der `SensorPlots`-Klasse - startet. Außerdem wird hier auch die `queue` erstellt, über die es möglich ist, Daten von einem zum anderen Thread zu schicken.
 
  ## Code
- - `Collector.read_loop(queue)`: Verbindet sich mit dem TCP Port und startet eine while-Schleife, welche dauerhaft den Port 5001 beobachtet und die Messdaten entgegennimmt. Wenn ein neuer Datensatz empfangen wurde, wird dieser in ein Dictionary umgewandelt und zur `queue` hinzugefügt.
+ - `Collector.read_loop(queue)`: Verbindet sich mit dem TCP Port und startet eine while-Schleife, welche dauerhaft den Port 5005 beobachtet und die Messdaten entgegennimmt. Wenn ein neuer Datensatz empfangen wurde, wird dieser in ein Dictionary umgewandelt und zur `queue` hinzugefügt.
 
  ```python
  def read_loop(self, queue_out):
